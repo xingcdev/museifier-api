@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -24,7 +23,4 @@ public class Account {
     private String username;
 
     private String password;
-
-    @OneToMany(mappedBy = "account")
-    private List<Visit> visits;
 }

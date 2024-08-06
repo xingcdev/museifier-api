@@ -27,5 +27,5 @@ CREATE TABLE visit (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     comment varchar(255),
     museum_id uuid REFERENCES museum NOT NULL,
-    account_id uuid REFERENCES account NOT NULL
+    user_id varchar(255) NOT NULL
 );

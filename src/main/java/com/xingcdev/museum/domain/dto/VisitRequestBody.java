@@ -17,7 +17,5 @@ public class VisitRequestBody {
 
     private String comment;
 
-    private UUID accountId;
-
     private UUID museumId;
 }

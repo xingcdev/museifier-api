@@ -22,9 +22,7 @@ public class Visit {
 
     private String comment;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account account;
+    private String userId;
 
     @ManyToOne
     @JoinColumn(name = "museum_id")
