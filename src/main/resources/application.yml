@@ -1,0 +1,8 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9000/realms/museum
+          # Point to the URI containing the public key so that our Resource Server can verify the tokens’ integrity.
+          jwk-set-uri: http://localhost:9000/realms/museum/protocol/openid-connect/certs
