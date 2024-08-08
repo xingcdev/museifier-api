@@ -6,9 +6,11 @@ J'ai pu acquérir les compétences suivantes avec ce projet :
 
 - La création d'une API Rest de A à Z
 - Les patterns utilisés en Backend, à savoir le système des 3 couches (Persistence, Service, View), Data Transfer Object
-  et Repository.
-- Test d'intégration des controllers avec Spring MVC Test framework
-- Authentification avec le protocol d'autorisation OAuth 2.0. L'implémentation est fait avec le serveur d'authorization
+  et Repository. Ces patterns se retrouvent dans les autres frameworks. La transition d'un framework à un autre est
+  facilitée.
+- Test d'intégration des controllers avec l'objet MockMvc du Spring MVC Test framework
+- Mise en place de l'authentification avec le protocole d'autorisation OAuth 2.0. L'implémentation est fait avec le
+  serveur d'authorization
   Keycloak.
 
 ## How to Authenticate
