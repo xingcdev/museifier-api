@@ -1,7 +1,7 @@
 package com.xingcdev.museum.controllers;
 
-import com.xingcdev.museum.domain.dto.VisitRequestBody;
 import com.xingcdev.museum.domain.dto.VisitDto;
+import com.xingcdev.museum.domain.dto.VisitRequestBody;
 import com.xingcdev.museum.domain.entities.CustomPage;
 import com.xingcdev.museum.domain.entities.Visit;
 import com.xingcdev.museum.exceptions.DuplicateMuseumException;
@@ -82,13 +82,12 @@ public class VisitController {
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable("id") UUID id,
             @RequestBody VisitRequestBody visitRequestBody
-    ){
+    ) {
         if (!visitService.existsByUserId(id, jwt.getSubject())) throw new VisitNotFoundException(id);
 
         // 1. Check if the museum exists
-        museumService
-                .findOne(visitRequestBody.getMuseumId())
-                .orElseThrow(() -> new MuseumNotFoundException(visitRequestBody.getMuseumId().toString()));
+        if (!museumService.existsById(visitRequestBody.getMuseumId()))
+            throw new MuseumNotFoundException(visitRequestBody.getMuseumId().toString());
 
         // Make sure the id is the one from the param
         visitRequestBody.setId(id);

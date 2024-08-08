@@ -2,10 +2,8 @@ package com.xingcdev.museum.services;
 
 import com.xingcdev.museum.domain.entities.CustomPage;
 import com.xingcdev.museum.domain.entities.Museum;
-import com.xingcdev.museum.domain.entities.Visit;
 import com.xingcdev.museum.exceptions.InvalidSortingException;
 import com.xingcdev.museum.repositories.MuseumRepository;
-import com.xingcdev.museum.specifications.MuseumSpecification;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -38,7 +36,7 @@ public class MuseumService {
             var pageRequest = PageRequest.of(Math.max(page - 1, 0), pageSize, sort);
             return new CustomPage<>(museumRepository.findAll(pageRequest));
 
-        } catch(PropertyReferenceException e) {
+        } catch (PropertyReferenceException e) {
             throw new InvalidSortingException(sortValue);
         }
     }
@@ -56,7 +54,7 @@ public class MuseumService {
             var pageRequest = PageRequest.of(Math.max(page - 1, 0), pageSize, sort);
             return new CustomPage<>(museumRepository.findAll(museumSpecification, pageRequest));
 
-        } catch(PropertyReferenceException e) {
+        } catch (PropertyReferenceException e) {
             throw new InvalidSortingException(sortValue);
         }
     }
@@ -67,5 +65,9 @@ public class MuseumService {
 
     public Museum save(Museum museum) {
         return museumRepository.save(museum);
+    }
+
+    public boolean existsById(UUID id) {
+        return museumRepository.existsById(id);
     }
 }
