@@ -42,7 +42,7 @@ curl --location 'http://localhost:9000/realms/museum-dev/protocol/openid-connect
 ## Todos
 
 - [x] /visits should return the visits of the user not all visits.
-- [ ] Replace findOne of museum to existsById
+- [x] Replace findOne of museum to existsById
 - [ ] Check if we have a valid dto in POST, PUT, PATCH
 - [ ] Change DirtyContext to SQL Script in @BeforeEach because it is too expensive to reset the application context each
   time?
