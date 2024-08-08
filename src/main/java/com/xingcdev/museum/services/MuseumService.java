@@ -2,6 +2,7 @@ package com.xingcdev.museum.services;
 
 import com.xingcdev.museum.domain.entities.CustomPage;
 import com.xingcdev.museum.domain.entities.Museum;
+import com.xingcdev.museum.domain.entities.Visit;
 import com.xingcdev.museum.exceptions.InvalidSortingException;
 import com.xingcdev.museum.repositories.MuseumRepository;
 import com.xingcdev.museum.specifications.MuseumSpecification;
@@ -62,5 +63,9 @@ public class MuseumService {
 
     public Optional<Museum> findOne(UUID id) {
         return museumRepository.findById(id);
+    }
+
+    public Museum save(Museum museum) {
+        return museumRepository.save(museum);
     }
 }
