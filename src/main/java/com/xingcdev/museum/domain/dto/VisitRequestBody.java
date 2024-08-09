@@ -1,5 +1,7 @@
 package com.xingcdev.museum.domain.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,9 +15,9 @@ import java.util.UUID;
 @Builder
 public class VisitRequestBody {
 
-    private UUID id;
-
+    @NotBlank(message = "Please provide a comment")
     private String comment;
 
+    @NotNull(message = "Please provide a museum Id")
     private UUID museumId;
 }

@@ -261,29 +261,6 @@ public class VisitControllerIntegrationTest {
     }
 
     @Test
-    public void partialUpdateVisitShouldNotUpdateTheId() throws Exception {
-        var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
-        var visitInDb = visitService.save(TestDataUtil.createVisitA(currentUserId, museumInDb));
-
-        var visitDto = VisitRequestBody
-                .builder()
-                .id(UUID.fromString("00000000-0000-0000-0000-000000000000"))
-                .build();
-        String visitDtoJson = objectMapper.writeValueAsString(visitDto);
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.patch("/visits/" + visitInDb.getId().toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken)
-                        .content(visitDtoJson)
-        ).andExpect(
-                MockMvcResultMatchers.status().isOk()
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.id").value(visitInDb.getId().toString())
-        );
-    }
-
-    @Test
     public void partialUpdateVisitShouldReturnMuseumNotFound() throws Exception {
         var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
         var visitInDb = visitService.save(TestDataUtil.createVisitA(currentUserId, museumInDb));

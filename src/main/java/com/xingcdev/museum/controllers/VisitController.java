@@ -11,6 +11,7 @@ import com.xingcdev.museum.mappers.impl.VisitDtoMapper;
 import com.xingcdev.museum.mappers.impl.VisitRequestBodyMapper;
 import com.xingcdev.museum.services.MuseumService;
 import com.xingcdev.museum.services.VisitService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -59,7 +60,7 @@ public class VisitController {
     @PostMapping(path = "/visits")
     public ResponseEntity<VisitDto> createVisit(
             @AuthenticationPrincipal Jwt jwt,
-            @RequestBody VisitRequestBody visitRequestBody) {
+            @Valid @RequestBody VisitRequestBody visitRequestBody) {
 
         // 1. Check if the museum exists
         var foundMuseum = museumService
@@ -90,8 +91,8 @@ public class VisitController {
             throw new MuseumNotFoundException(visitRequestBody.getMuseumId().toString());
 
         // Make sure the id is the one from the param
-        visitRequestBody.setId(id);
         var visit = visitRequestBodyMapper.mapFromDto(visitRequestBody);
+        visit.setId(id);
         visit.setUserId(jwt.getSubject());
         var savedVisit = visitService.save(visit);
         return new ResponseEntity<>(visitDtoMapper.mapToDto(savedVisit), HttpStatus.OK);

@@ -8,15 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Date;
-
 @ControllerAdvice
 public class MuseumExceptionHandler {
 
     @ExceptionHandler(MuseumNotFoundException.class)
     public ResponseEntity<ErrorDto> museumNotFoundException(MuseumNotFoundException ex) {
         var errorDTO = ErrorDto.builder()
-                .timestamp(new Date().toString())
                 .code(ex.getCode())
                 .message(ex.getMessage())
                 .build();
@@ -26,7 +23,6 @@ public class MuseumExceptionHandler {
     @ExceptionHandler(DuplicateMuseumException.class)
     public ResponseEntity<ErrorDto> duplicateMuseumException(DuplicateMuseumException ex) {
         var errorDTO = ErrorDto.builder()
-                .timestamp(new Date().toString())
                 .code(ex.getCode())
                 .message(ex.getMessage())
                 .build();

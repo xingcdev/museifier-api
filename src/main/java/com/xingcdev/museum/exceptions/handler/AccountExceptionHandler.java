@@ -7,15 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Date;
-
 @ControllerAdvice
 public class AccountExceptionHandler {
 
     @ExceptionHandler(AccountNotFoundException.class)
     public ResponseEntity<ErrorDto> accountNotFoundException(AccountNotFoundException ex) {
         var errorDTO = ErrorDto.builder()
-                .timestamp(new Date().toString())
                 .code(ex.getCode())
                 .message(ex.getMessage())
                 .build();
