@@ -54,6 +54,15 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(errorDTO, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDto> handleNoHandlerFoundException() {
+        var errorDTO = ErrorDto.builder()
+                .code("unknownError")
+                .message("The server has encountered an unknown error. Please try again.")
+                .build();
+        return new ResponseEntity<>(errorDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorDto> methodArgumentNotValidException(MethodArgumentNotValidException ex) {
 
