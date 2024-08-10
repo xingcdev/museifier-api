@@ -16,7 +16,17 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import java.util.ArrayList;
 
 @ControllerAdvice
-public class ApiExceptionHandler {
+public class GlobalExceptionHandler {
+
+    // ====== Spring Boot built-in exceptions ======
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorDto> handleException() {
+        var errorDTO = ErrorDto.builder()
+                .code("unknownError")
+                .message("The server has encountered an unknown error. Please try again.")
+                .build();
+        return new ResponseEntity<>(errorDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorDto> handleTypeMismatch() {
@@ -27,17 +37,8 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(InvalidSortingException.class)
-    public ResponseEntity<ErrorDto> invalidSortingException(InvalidSortingException ex) {
-        var errorDTO = ErrorDto.builder()
-                .code(ex.getCode())
-                .message(ex.getMessage())
-                .build();
-        return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorDto> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ErrorDto> handleHttpMessageNotReadable() {
         var errorDTO = ErrorDto.builder()
                 .code("httpMessageNotReadable")
                 .message("The request body seems incorrect. Please provide a valid body.")
@@ -46,7 +47,7 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ErrorDto> handleNoResourceFoundException(NoResourceFoundException ex) {
+    public ResponseEntity<ErrorDto> handleNoResourceFound() {
         var errorDTO = ErrorDto.builder()
                 .code("noResourceFound")
                 .message("The requested resource is not found. Please provide a valid path.")
@@ -54,17 +55,8 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(errorDTO, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDto> handleNoHandlerFoundException() {
-        var errorDTO = ErrorDto.builder()
-                .code("unknownError")
-                .message("The server has encountered an unknown error. Please try again.")
-                .build();
-        return new ResponseEntity<>(errorDTO, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDto> methodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorDto> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
 
         var detailDtos = new ArrayList<DetailDto>();
 
@@ -84,6 +76,17 @@ public class ApiExceptionHandler {
                 .code("validationFailed")
                 .message("Please provide a valid request body.")
                 .details(detailDtos)
+                .build();
+        return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    // ====== User-defined exceptions ======
+
+    @ExceptionHandler(InvalidSortingException.class)
+    public ResponseEntity<ErrorDto> handleInvalidSorting(InvalidSortingException ex) {
+        var errorDTO = ErrorDto.builder()
+                .code(ex.getCode())
+                .message(ex.getMessage())
                 .build();
         return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
     }
