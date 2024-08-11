@@ -2,6 +2,7 @@ package com.xingcdev.museum.exceptions.handler;
 
 import com.xingcdev.museum.domain.dto.DetailDto;
 import com.xingcdev.museum.domain.dto.ErrorDto;
+import com.xingcdev.museum.domain.dto.ErrorDtoWithDetails;
 import com.xingcdev.museum.exceptions.InvalidSortingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,7 +57,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDto> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorDtoWithDetails> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
 
         var detailDtos = new ArrayList<DetailDto>();
 
@@ -72,7 +73,7 @@ public class GlobalExceptionHandler {
             detailDtos.add(detailDto);
         });
 
-        var errorDTO = ErrorDto.builder()
+        var errorDTO = ErrorDtoWithDetails.builder()
                 .code("validationFailed")
                 .message("Please provide a valid request body.")
                 .details(detailDtos)
