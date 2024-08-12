@@ -13,3 +13,20 @@ spring:
           jwk-set-uri: http://localhost:9000/realms/museum-dev/protocol/openid-connect/certs
   application:
     name: museum
+
+# ====== Disabled in prod ======
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    oauth:
+      client-id: dtiMy6xitk6niYDU2LGZmMT6qymK5t978TqaoKUu
+      client-secret: eszO6Kp9VxhxxXz1YIX3IWyOIXpRrR7z
+      scopes: "openid"
+# ==============================
+
+museum:
+  oauth2:
+    issuer-uri: http://localhost:9000/realms/museum-dev
+    token-uri: http://localhost:9000/realms/museum-dev/protocol/openid-connect/token
