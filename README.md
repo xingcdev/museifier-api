@@ -1,5 +1,9 @@
 # Museum App
 
+## Swagger
+
+http://localhost:8080/swagger-ui/index.html
+
 ## Compétences acquis
 
 J'ai pu acquérir les compétences suivantes avec ce projet :
