@@ -23,7 +23,7 @@ public class SwaggerConfig {
         return new OpenAPI().components(new Components()
                         .addSecuritySchemes(OAUTH_SCHEME_NAME, createOAuthScheme()))
                 .addSecurityItem(new SecurityRequirement().addList(OAUTH_SCHEME_NAME))
-                .info(new Info().title("Museum App")
+                .info(new Info().title("Museum App (Dev)")
                         .description("Managing your visited museums.")
                         .version("1.0"));
     }
