@@ -104,7 +104,7 @@ public class VisitControllerIntegrationTest {
                 .andExpect(
                         MockMvcResultMatchers.status().isNotFound()
                 ).andExpect(
-                        MockMvcResultMatchers.jsonPath("$.code").value("visitNotFound")
+                        MockMvcResultMatchers.jsonPath("$.code").value("visit_not_found")
                 );
     }
 
@@ -150,7 +150,7 @@ public class VisitControllerIntegrationTest {
         ).andExpect(
                 MockMvcResultMatchers.status().isNotFound()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.code").value("museumNotFound")
+                MockMvcResultMatchers.jsonPath("$.code").value("museum_not_found")
         );
     }
 
@@ -180,7 +180,7 @@ public class VisitControllerIntegrationTest {
         ).andExpect(
                 MockMvcResultMatchers.status().isBadRequest()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.code").value("duplicateMuseum")
+                MockMvcResultMatchers.jsonPath("$.code").value("duplicate_museum")
         );
     }
 
@@ -229,7 +229,7 @@ public class VisitControllerIntegrationTest {
                 .andExpect(
                         MockMvcResultMatchers.status().isNotFound()
                 ).andExpect(
-                        MockMvcResultMatchers.jsonPath("$.code").value("visitNotFound")
+                        MockMvcResultMatchers.jsonPath("$.code").value("visit_not_found")
                 );
     }
 
@@ -279,7 +279,7 @@ public class VisitControllerIntegrationTest {
         ).andExpect(
                 MockMvcResultMatchers.status().isNotFound()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.code").value("museumNotFound")
+                MockMvcResultMatchers.jsonPath("$.code").value("museum_not_found")
         );
     }
 

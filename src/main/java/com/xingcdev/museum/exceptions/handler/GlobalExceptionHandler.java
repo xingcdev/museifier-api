@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorDto> handleTypeMismatch() {
         var errorDTO = ErrorDto.builder()
-                .code("typeMismatch")
+                .code("type_mismatch")
                 .message("The id you entered is invalid. Please try again.")
                 .build();
         return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorDto> handleHttpMessageNotReadable() {
         var errorDTO = ErrorDto.builder()
-                .code("httpMessageNotReadable")
+                .code("http_message_not_readable")
                 .message("The request body seems incorrect. Please provide a valid body.")
                 .build();
         return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorDto> handleNoResourceFound() {
         var errorDTO = ErrorDto.builder()
-                .code("noResourceFound")
+                .code("no_resource_found")
                 .message("The requested resource is not found. Please provide a valid path.")
                 .build();
         return new ResponseEntity<>(errorDTO, HttpStatus.NOT_FOUND);
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
         });
 
         var errorDTO = ErrorDtoWithDetails.builder()
-                .code("validationFailed")
+                .code("validation_failed")
                 .message("Please provide a valid request body.")
                 .details(detailDtos)
                 .build();
