@@ -13,29 +13,18 @@ spring:
           jwk-set-uri: ${museum.oauth2.jwk-uri}
   application:
     name: museum
-  jpa:
-    hibernate:
-      # Disable Hibernate database initialization because we want to use 'schema.sql'
-      ddl-auto: none
+  sql:
+    init:
+      mode: never
 
-# ====== Disabled in prod ======
 springdoc:
   api-docs:
-    enabled: true
+    enabled: false
   swagger-ui:
-    enabled: true
-    oauth:
-      client-id: ${museum.oauth2.client-id}
-      client-secret: ${museum.oauth2.client-secret}
-      scopes: ${museum.oauth2.scopes}
-# ==============================
+    enabled: false
 
 museum:
   oauth2:
-    client-id: dtiMy6xitk6niYDU2LGZmMT6qymK5t978TqaoKUu
-    client-secret: eszO6Kp9VxhxxXz1YIX3IWyOIXpRrR7z
-    scopes: "openid"
     issuer-uri: http://localhost:9000/realms/museum-dev
     token-uri: http://localhost:9000/realms/museum-dev/protocol/openid-connect/token
     jwk-uri: http://localhost:9000/realms/museum-dev/protocol/openid-connect/certs
-debug: true

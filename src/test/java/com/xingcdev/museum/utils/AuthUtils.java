@@ -26,7 +26,8 @@ public class AuthUtils {
                 .toUri();
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.put("grant_type", Collections.singletonList("password"));
-        formData.put("client_id", Collections.singletonList("museum-app"));
+        formData.put("client_id", Collections.singletonList("dtiMy6xitk6niYDU2LGZmMT6qymK5t978TqaoKUu"));
+        formData.put("client_secret", Collections.singletonList("eszO6Kp9VxhxxXz1YIX3IWyOIXpRrR7z"));
         formData.put("username", Collections.singletonList("test"));
         formData.put("password", Collections.singletonList("test"));
         formData.put("scope", Collections.singletonList("openid"));
