@@ -20,14 +20,6 @@ import java.util.ArrayList;
 public class GlobalExceptionHandler {
 
     // ====== Spring Boot built-in exceptions ======
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDto> handleException() {
-        var errorDTO = ErrorDto.builder()
-                .code("unknownError")
-                .message("The server has encountered an unknown error. Please try again.")
-                .build();
-        return new ResponseEntity<>(errorDTO, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorDto> handleTypeMismatch() {
