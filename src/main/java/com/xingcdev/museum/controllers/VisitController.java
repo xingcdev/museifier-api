@@ -4,7 +4,6 @@ import com.xingcdev.museum.domain.dto.VisitDto;
 import com.xingcdev.museum.domain.dto.VisitRequestBody;
 import com.xingcdev.museum.domain.entities.CustomPage;
 import com.xingcdev.museum.domain.entities.Visit;
-import com.xingcdev.museum.exceptions.DuplicateMuseumException;
 import com.xingcdev.museum.exceptions.MuseumNotFoundException;
 import com.xingcdev.museum.exceptions.VisitNotFoundException;
 import com.xingcdev.museum.mappers.impl.VisitDtoMapper;
@@ -66,10 +65,6 @@ public class VisitController {
         var foundMuseum = museumService
                 .findOne(visitRequestBody.getMuseumId())
                 .orElseThrow(() -> new MuseumNotFoundException(visitRequestBody.getMuseumId().toString()));
-
-        // 3. Check if the museum is already visited
-        var isMuseumAlreadyExist = visitService.isMuseumAlreadyVisited(visitRequestBody.getMuseumId(), jwt.getSubject());
-        if (isMuseumAlreadyExist) throw new DuplicateMuseumException(visitRequestBody.getMuseumId().toString());
 
         Visit visit = visitRequestBodyMapper.mapFromDto(visitRequestBody);
         visit.setMuseum(foundMuseum);
