@@ -82,9 +82,9 @@ public class VisitController {
     public ResponseEntity<VisitDto> fullUpdateVisit(
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable("id") UUID id,
-            @RequestBody VisitRequestBody visitRequestBody
+            @Valid @RequestBody VisitRequestBody visitRequestBody
     ) {
-        if (!visitService.existsByUserId(id, jwt.getSubject())) throw new VisitNotFoundException(id);
+        var existingVisit = visitService.findOneByUserId(id, jwt.getSubject()).orElseThrow(() -> new VisitNotFoundException(id));
 
         // 1. Check if the museum exists
         if (!museumService.existsById(visitRequestBody.getMuseumId()))
@@ -94,6 +94,8 @@ public class VisitController {
         var visit = visitRequestBodyMapper.mapFromDto(visitRequestBody);
         visit.setId(id);
         visit.setUserId(jwt.getSubject());
+        // 'created' in requestBody in null
+        visit.setCreated(existingVisit.getCreated());
         var savedVisit = visitService.save(visit);
         return new ResponseEntity<>(visitDtoMapper.mapToDto(savedVisit), HttpStatus.OK);
     }
@@ -102,7 +104,7 @@ public class VisitController {
     public ResponseEntity<VisitDto> partialUpdateVisit(
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable("id") UUID id,
-            @RequestBody VisitRequestBody visitRequestBody
+            @Valid @RequestBody VisitRequestBody visitRequestBody
     ) {
         if (!visitService.existsByUserId(id, jwt.getSubject())) throw new VisitNotFoundException(id);
 

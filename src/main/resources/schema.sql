@@ -17,8 +17,13 @@ CREATE TABLE museum
 
 CREATE TABLE visit
 (
-    id        uuid PRIMARY KEY,
-    comment   varchar(255),
-    museum_id uuid REFERENCES museum NOT NULL,
-    user_id   varchar(255)           NOT NULL
+    id         uuid PRIMARY KEY,
+    title      varchar(50)            NOT NULL,
+    visit_date date                   NOT NULL,
+    comment    varchar(255)           NOT NULL,
+    rating     integer                NOT NULL,
+    museum_id  uuid REFERENCES museum NOT NULL,
+    user_id    varchar(255)           NOT NULL,
+    created    timestamp,
+    updated    timestamp
 );

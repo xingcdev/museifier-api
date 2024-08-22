@@ -41,7 +41,10 @@ public class VisitService {
         // 1. Retrieve the existing visit
         // 2. Update its attributes
         return visitRepository.findById(id).map(existingVisit -> {
+            Optional.ofNullable(newVisit.getTitle()).ifPresent(existingVisit::setTitle);
+            Optional.ofNullable(newVisit.getVisitDate()).ifPresent(existingVisit::setVisitDate);
             Optional.ofNullable(newVisit.getComment()).ifPresent(existingVisit::setComment);
+            Optional.of(newVisit.getRating()).ifPresent(existingVisit::setRating);
 
             Optional.ofNullable(newVisit.getMuseum()).ifPresent(museum -> {
                 var museumId = museum.getId();

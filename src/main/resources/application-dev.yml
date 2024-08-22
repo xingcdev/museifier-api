@@ -17,6 +17,9 @@ spring:
     hibernate:
       # Disable Hibernate database initialization because we want to use 'schema.sql'
       ddl-auto: none
+  h2:
+    console:
+      enabled: true
 
 # ====== Disabled in prod ======
 springdoc:
