@@ -8,6 +8,7 @@ import com.xingcdev.museum.repositories.VisitRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -60,6 +61,10 @@ public class VisitService {
 
     public boolean existsByUserId(UUID id, String userId) {
         return visitRepository.existsByIdAndUserId(id, userId);
+    }
+
+    public boolean existsByMuseumIdAndVisitDate(UUID museumId, LocalDate visitDate, String userId) {
+        return visitRepository.existsByMuseumIdAndVisitDateAndUserId(museumId, visitDate, userId);
     }
 
     public boolean isMuseumAlreadyVisited(UUID museumId, String userId) {

@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,4 +22,5 @@ public interface VisitRepository extends CrudRepository<Visit, UUID>, PagingAndS
 
     boolean existsByIdAndUserId(UUID museumId, String accountId);
 
+    boolean existsByMuseumIdAndVisitDateAndUserId(UUID museumId, LocalDate visitDate, String userId);
 }

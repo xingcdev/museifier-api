@@ -4,6 +4,7 @@ import com.xingcdev.museum.domain.dto.VisitDto;
 import com.xingcdev.museum.domain.dto.VisitRequestBody;
 import com.xingcdev.museum.domain.entities.CustomPage;
 import com.xingcdev.museum.domain.entities.Visit;
+import com.xingcdev.museum.exceptions.MuseumAlreadyVisitedException;
 import com.xingcdev.museum.exceptions.MuseumNotFoundException;
 import com.xingcdev.museum.exceptions.VisitNotFoundException;
 import com.xingcdev.museum.mappers.impl.VisitDtoMapper;
@@ -65,6 +66,14 @@ public class VisitController {
         var foundMuseum = museumService
                 .findOne(visitRequestBody.getMuseumId())
                 .orElseThrow(() -> new MuseumNotFoundException(visitRequestBody.getMuseumId().toString()));
+
+        // 2. Check if there is a visit of a museum in a specific day.
+        // We cannot have multiple visits for a museum in a day
+        // It makes more sense to have one visit a day for the same museum
+        if (visitService.existsByMuseumIdAndVisitDate(visitRequestBody.getMuseumId(), visitRequestBody.getVisitDate(), jwt.getSubject())) {
+            throw new MuseumAlreadyVisitedException(visitRequestBody.getMuseumId().toString());
+        }
+
 
         Visit visit = visitRequestBodyMapper.mapFromDto(visitRequestBody);
         visit.setMuseum(foundMuseum);
