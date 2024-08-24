@@ -1,4 +1,5 @@
 package com.xingcdev.museum.mappers.impl;
+
 import com.xingcdev.museum.domain.dto.VisitDto;
 import com.xingcdev.museum.domain.entities.CustomPage;
 import com.xingcdev.museum.domain.entities.Visit;
@@ -26,7 +27,7 @@ public class VisitDtoMapper implements IDtoMapper<Visit, VisitDto> {
     }
 
     @Override
-    public CustomPage<VisitDto> mapToPageDto(CustomPage<Visit> visitPage) {
+    public CustomPage<VisitDto> mapToCustomPageDto(CustomPage<Visit> visitPage) {
         var museumDtoList = visitPage.getData().stream().map(this::mapToDto).toList();
         return new CustomPage<>(
                 museumDtoList,

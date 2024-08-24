@@ -41,7 +41,7 @@ public class VisitController {
             @RequestParam(value = "size", defaultValue = "20") int pageSize
     ) {
         var userId = jwt.getSubject();
-        return visitDtoMapper.mapToPageDto(visitService.findAllByUserId(userId, page, pageSize));
+        return visitDtoMapper.mapToCustomPageDto(visitService.findAllByUserId(userId, page, pageSize));
     }
 
     @GetMapping(path = "/visits/{id}")

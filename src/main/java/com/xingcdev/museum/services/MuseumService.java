@@ -63,6 +63,11 @@ public class MuseumService {
         return museumRepository.findById(id);
     }
 
+    public CustomPage<Museum> findVisited(String userId, int page, int pageSize) {
+        var pageRequest = PageRequest.of(Math.max(page - 1, 0), pageSize);
+        return new CustomPage<>(museumRepository.findDistinctByVisitsUserId(userId, pageRequest));
+    }
+
     public Museum save(Museum museum) {
         return museumRepository.save(museum);
     }

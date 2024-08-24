@@ -8,5 +8,5 @@ public interface IDtoMapper<Entity, Dto> {
 
     Entity mapFromDto(Dto b);
 
-    CustomPage<Dto> mapToPageDto(CustomPage<Entity> entityPage);
+    CustomPage<Dto> mapToCustomPageDto(CustomPage<Entity> entityPage);
 }
