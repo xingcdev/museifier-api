@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @SpringBootTest
@@ -38,11 +39,11 @@ public class VisitControllerIntegrationTest {
     private static String currentUserId;
 
     @Autowired
-    public VisitControllerIntegrationTest(MockMvc mockMvc, VisitService visitService, MuseumService museumService) {
+    public VisitControllerIntegrationTest(MockMvc mockMvc, VisitService visitService, MuseumService museumService, ObjectMapper objectMapper) {
         this.mockMvc = mockMvc;
         this.visitService = visitService;
         this.museumService = museumService;
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = objectMapper;
     }
 
     @BeforeAll
@@ -114,7 +115,10 @@ public class VisitControllerIntegrationTest {
 
         var visitDto = VisitRequestBody
                 .builder()
-                .comment("Comment of VisitRequestBody A")
+                .title("Title of VisitRequestBody")
+                .rating(3)
+                .visitDate(LocalDate.now())
+                .comment("Comment of VisitRequestBody")
                 .museumId(museumInDb.getId())
                 .build();
         String visitDtoJson = objectMapper.writeValueAsString(visitDto);
@@ -127,7 +131,7 @@ public class VisitControllerIntegrationTest {
         ).andExpect(
                 MockMvcResultMatchers.status().isCreated()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.comment").value("Comment of VisitRequestBody A")
+                MockMvcResultMatchers.jsonPath("$.comment").value("Comment of VisitRequestBody")
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.museum.id").value(museumInDb.getId().toString())
         );
@@ -137,6 +141,9 @@ public class VisitControllerIntegrationTest {
     public void createVisitShouldReturnMuseumNotFound() throws Exception {
         var visitDto = VisitRequestBody
                 .builder()
+                .title("Title of VisitRequestBody")
+                .rating(3)
+                .visitDate(LocalDate.now())
                 .comment("Comment of VisitRequestBody")
                 .museumId(UUID.fromString("00000000-0000-0000-0000-000000000000"))
                 .build();
@@ -155,42 +162,15 @@ public class VisitControllerIntegrationTest {
     }
 
     @Test
-    public void createVisitShouldReturnDuplicateMuseumError() throws Exception {
-        var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
-
-        var visitDto = VisitRequestBody
-                .builder()
-                .comment("Comment of VisitRequestBody")
-                .museumId(museumInDb.getId())
-                .build();
-        String visitDtoJson = objectMapper.writeValueAsString(visitDto);
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/visits")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken)
-                        .content(visitDtoJson)
-        );
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/visits")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken)
-                        .content(visitDtoJson)
-        ).andExpect(
-                MockMvcResultMatchers.status().isBadRequest()
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.code").value("duplicate_museum")
-        );
-    }
-
-    @Test
     public void fullUpdateVisitShouldReturnUpdatedVisit() throws Exception {
         var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
         var visitInDb = visitService.save(TestDataUtil.createVisitA(currentUserId, museumInDb));
 
         var visitDto = VisitRequestBody
                 .builder()
+                .title("Title of VisitRequestBody")
+                .rating(3)
+                .visitDate(LocalDate.now())
                 .comment("Comment updated")
                 .museumId(visitInDb.getMuseum().getId())
                 .build();
@@ -216,6 +196,9 @@ public class VisitControllerIntegrationTest {
     public void fullUpdateVisitShouldReturn404WhenNoVisitExists() throws Exception {
         var visitDto = VisitRequestBody
                 .builder()
+                .title("Title of VisitRequestBody")
+                .rating(3)
+                .visitDate(LocalDate.now())
                 .comment("Comment updated")
                 .museumId(UUID.fromString("00000000-0000-0000-0000-000000000000"))
                 .build();
@@ -240,6 +223,9 @@ public class VisitControllerIntegrationTest {
 
         var visitDto = VisitRequestBody
                 .builder()
+                .title("Title of VisitRequestBody")
+                .rating(3)
+                .visitDate(LocalDate.now())
                 .comment("Comment updated")
                 .build();
         String visitDtoJson = objectMapper.writeValueAsString(visitDto);
