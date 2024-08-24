@@ -1,5 +1,7 @@
 package com.xingcdev.museum.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xingcdev.museum.domain.dto.VisitRequestBody;
 import com.xingcdev.museum.services.MuseumService;
 import com.xingcdev.museum.utils.AuthUtils;
 import com.xingcdev.museum.utils.TestDataUtil;
@@ -16,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.time.LocalDate;
+
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
@@ -27,13 +31,17 @@ public class MuseumControllerIntegrationTests {
 
     private final MuseumService museumService;
 
+    private final ObjectMapper objectMapper;
+
     private static String accessToken;
+
 
     @Autowired
     public MuseumControllerIntegrationTests(MockMvc mockMvc,
-                                            MuseumService museumService) {
+                                            MuseumService museumService, ObjectMapper objectMapper) {
         this.mockMvc = mockMvc;
         this.museumService = museumService;
+        this.objectMapper = objectMapper;
     }
 
     @BeforeAll
@@ -133,6 +141,88 @@ public class MuseumControllerIntegrationTests {
                         .header("Authorization", "Bearer " + accessToken))
                 .andExpect(
                         MockMvcResultMatchers.status().isNotFound()
+                );
+    }
+
+    @Test
+    public void getMuseumsShouldReturnVisitedMuseums() throws Exception {
+        var museumLeLouvreInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
+        var museumPicassoInDb = museumService.save(TestDataUtil.createMuseumPicasso());
+
+        var visitDto1 = VisitRequestBody
+                .builder()
+                .title("First visit at Le Louvre")
+                .rating(3)
+                .visitDate(LocalDate.of(2024, 1, 1))
+                .comment("Comment")
+                .museumId(museumLeLouvreInDb.getId())
+                .build();
+        String visitDtoJson1 = objectMapper.writeValueAsString(visitDto1);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/visits")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .content(visitDtoJson1)
+        ).andExpect(
+                MockMvcResultMatchers.status().isCreated()
+        );
+
+        var visitDto2 = VisitRequestBody
+                .builder()
+                .title("Second visit at Le Louvre")
+                .rating(3)
+                .visitDate(LocalDate.of(2024, 1, 2))
+                .comment("Comment")
+                .museumId(museumLeLouvreInDb.getId())
+                .build();
+        String visitDtoJson2 = objectMapper.writeValueAsString(visitDto2);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/visits")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .content(visitDtoJson2)
+        ).andExpect(
+                MockMvcResultMatchers.status().isCreated()
+        );
+
+        var visitDto3 = VisitRequestBody
+                .builder()
+                .title("First visit at Picasso")
+                .rating(3)
+                .visitDate(LocalDate.of(2024, 1, 3))
+                .comment("Comment")
+                .museumId(museumPicassoInDb.getId())
+                .build();
+        String visitDtoJson3 = objectMapper.writeValueAsString(visitDto3);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/visits")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .content(visitDtoJson3)
+        ).andExpect(
+                MockMvcResultMatchers.status().isCreated()
+        );
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/museums/visited")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .header("Authorization", "Bearer " + accessToken)
+                ).andExpect(
+                        MockMvcResultMatchers.status().isOk()
+                ).andExpect(
+                        MockMvcResultMatchers.jsonPath("$.data[0].name").value(museumPicassoInDb.getName())
+                ).andExpect(
+                        MockMvcResultMatchers.jsonPath("$.data[0].visits[0].title").value("First visit at Picasso")
+                )
+                .andExpect(
+                        MockMvcResultMatchers.jsonPath("$.data[1].name").value(museumLeLouvreInDb.getName())
+                ).andExpect(
+                        MockMvcResultMatchers.jsonPath("$.data[1].visits[0].title").value("First visit at Le Louvre")
+                ).andExpect(
+                        MockMvcResultMatchers.jsonPath("$.data[1].visits[1].title").value("Second visit at Le Louvre")
                 );
     }
 
