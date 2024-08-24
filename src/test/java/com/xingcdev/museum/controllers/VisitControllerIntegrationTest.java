@@ -162,6 +162,40 @@ public class VisitControllerIntegrationTest {
     }
 
     @Test
+    public void createVisitShouldReturnMuseumAlreadyVisited() throws Exception {
+        var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
+        var visitDto = VisitRequestBody
+                .builder()
+                .title("Title")
+                .rating(3)
+                .visitDate(LocalDate.of(2024, 1, 1))
+                .comment("Comment")
+                .museumId(museumInDb.getId())
+                .build();
+        String visitDtoJson = objectMapper.writeValueAsString(visitDto);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/visits")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .content(visitDtoJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isCreated()
+        );
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/visits")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .content(visitDtoJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isBadRequest()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.code").value("museum_already_visited")
+        );
+    }
+
+    @Test
     public void fullUpdateVisitShouldReturnUpdatedVisit() throws Exception {
         var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
         var visitInDb = visitService.save(TestDataUtil.createVisitA(currentUserId, museumInDb));
