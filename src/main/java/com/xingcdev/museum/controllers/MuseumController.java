@@ -103,10 +103,22 @@ public class MuseumController {
     public CustomPage<VisitedMuseumDto> getVisitedMuseums(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "20") int pageSize,
+            @Parameter(example = "name:asc") @RequestParam(value = "sort", required = false) String sort,
             @AuthenticationPrincipal Jwt jwt
     ) {
-        var museums = museumService.findVisited(jwt.getSubject(), page, pageSize);
-        return visitedMuseumDtoMapper.mapToCustomPageDto(museums);
+        String[] sortParams = new String[0];
+
+        if (sort != null && !sort.isEmpty()) {
+            sortParams = sort.split(":");
+        }
+
+        if (sortParams.length >= 2) {
+            return visitedMuseumDtoMapper.mapToCustomPageDto(museumService.findVisited(jwt.getSubject(), page, pageSize, Optional.of(sortParams[0]), Optional.of(sortParams[1])));
+        } else if (sortParams.length == 1) {
+            return visitedMuseumDtoMapper.mapToCustomPageDto(museumService.findVisited(jwt.getSubject(), page, pageSize, Optional.of(sortParams[0]), Optional.empty()));
+        } else {
+            return visitedMuseumDtoMapper.mapToCustomPageDto(museumService.findVisited(jwt.getSubject(), page, pageSize, Optional.empty(), Optional.empty()));
+        }
     }
 
     @GetMapping(path = "/museums/{id}")
