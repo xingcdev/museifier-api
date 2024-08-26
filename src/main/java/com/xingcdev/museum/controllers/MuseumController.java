@@ -38,7 +38,7 @@ public class MuseumController {
     public CustomPage<MuseumDto> getMuseums(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "20") int pageSize,
-            @Parameter(example = "name:desc") @RequestParam(value = "sort", required = false) String sort,
+            @Parameter(example = "name:asc") @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "q", required = false) String searchQuery,
             @RequestParam(value = "address", required = false) String address,
             @RequestParam(value = "postalCode", required = false) String postalCode,
@@ -101,17 +101,57 @@ public class MuseumController {
 
     @GetMapping(path = "/museums/visited")
     public CustomPage<VisitedMuseumDto> getVisitedMuseums(
+            @AuthenticationPrincipal Jwt jwt,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "20") int pageSize,
             @Parameter(example = "name:asc") @RequestParam(value = "sort", required = false) String sort,
-            @AuthenticationPrincipal Jwt jwt
+            @RequestParam(value = "q", required = false) String searchQuery,
+            @RequestParam(value = "postalCode", required = false) String postalCode,
+            @RequestParam(value = "city", required = false) String city,
+            @RequestParam(value = "department", required = false) String department
+
     ) {
+        var museumSpecificationBuilder = new MuseumSpecificationBuilder();
+        museumSpecificationBuilder.with("visitUserId", jwt.getSubject());
         String[] sortParams = new String[0];
 
         if (sort != null && !sort.isEmpty()) {
             sortParams = sort.split(":");
         }
 
+        var isFiltering = searchQuery != null || postalCode != null || city != null || department != null;
+
+        // With filtering
+        if (isFiltering) {
+
+            if (searchQuery != null) {
+                museumSpecificationBuilder.with("q", searchQuery);
+            }
+
+            if (postalCode != null) {
+                museumSpecificationBuilder.with("postalCode", postalCode);
+            }
+
+            if (city != null) {
+                museumSpecificationBuilder.with("city", city);
+            }
+
+            if (department != null) {
+                museumSpecificationBuilder.with("department", department);
+            }
+
+            var museumSpecification = museumSpecificationBuilder.build();
+
+            if (sortParams.length >= 2) {
+                return visitedMuseumDtoMapper.mapToCustomPageDto(museumService.findVisitedWithFiltering(page, pageSize, museumSpecification, Optional.of(sortParams[0]), Optional.of(sortParams[1])));
+            } else if (sortParams.length == 1) {
+                return visitedMuseumDtoMapper.mapToCustomPageDto(museumService.findVisitedWithFiltering(page, pageSize, museumSpecification, Optional.of(sortParams[0]), Optional.empty()));
+            } else {
+                return visitedMuseumDtoMapper.mapToCustomPageDto(museumService.findVisitedWithFiltering(page, pageSize, museumSpecification, Optional.empty(), Optional.empty()));
+            }
+        }
+
+        // Without filtering
         if (sortParams.length >= 2) {
             return visitedMuseumDtoMapper.mapToCustomPageDto(museumService.findVisited(jwt.getSubject(), page, pageSize, Optional.of(sortParams[0]), Optional.of(sortParams[1])));
         } else if (sortParams.length == 1) {

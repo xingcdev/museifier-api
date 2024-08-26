@@ -77,6 +77,24 @@ public class MuseumService {
         }
     }
 
+    public CustomPage<Museum> findVisitedWithFiltering(int page, int pageSize, Specification<Museum> museumSpecification, Optional<String> sortBy, Optional<String> orderBy) {
+        var sortValue = sortBy.orElse("name");
+        var orderValue = orderBy.orElse("asc");
+
+        try {
+            Sort sort = Sort.by(sortValue).ascending();
+            if (Objects.equals(orderValue, "desc")) {
+                sort = Sort.by(sortValue).descending();
+            }
+
+            var pageRequest = PageRequest.of(Math.max(page - 1, 0), pageSize, sort);
+            return new CustomPage<>(museumRepository.findAll(museumSpecification, pageRequest));
+
+        } catch (PropertyReferenceException e) {
+            throw new InvalidSortingException(sortValue);
+        }
+    }
+
     public Optional<Museum> findOne(UUID id) {
         return museumRepository.findById(id);
     }

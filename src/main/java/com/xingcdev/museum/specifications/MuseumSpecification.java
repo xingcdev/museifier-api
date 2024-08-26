@@ -1,10 +1,8 @@
 package com.xingcdev.museum.specifications;
 
 import com.xingcdev.museum.domain.entities.Museum;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import com.xingcdev.museum.domain.entities.Visit;
+import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -20,6 +18,13 @@ public class MuseumSpecification implements Specification<Museum> {
             return builder.like(
                     builder.lower(root.get("name")),
                     "%" + searchCriteria.getValue().toLowerCase() + "%");
+        }
+
+        if (searchCriteria.getKey().equalsIgnoreCase("visitUserId")) {
+            Join<Museum, Visit> visitJoin = root.join("visits", JoinType.INNER);
+            // select distinct
+            query.distinct(true);
+            return builder.equal(builder.lower(visitJoin.get("userId")), searchCriteria.getValue());
         }
 
         return builder.like(

@@ -13,6 +13,5 @@ import java.util.UUID;
 @Repository
 public interface MuseumRepository extends CrudRepository<Museum, UUID>, PagingAndSortingRepository<Museum, UUID>, JpaSpecificationExecutor<Museum> {
 
-    //    @Query("select distinct m from Museum m join Visit v on v.museum = m.id where v.userId = ?1")
     Page<Museum> findDistinctByVisitsUserId(String userId, Pageable pageable);
 }
