@@ -2,6 +2,7 @@ package com.xingcdev.museum.controllers;
 
 import com.xingcdev.museum.domain.dto.VisitDto;
 import com.xingcdev.museum.domain.dto.VisitRequestBody;
+import com.xingcdev.museum.domain.dto.VisitUpdateRequestBody;
 import com.xingcdev.museum.domain.entities.CustomPage;
 import com.xingcdev.museum.domain.entities.Visit;
 import com.xingcdev.museum.exceptions.MuseumAlreadyVisitedException;
@@ -9,6 +10,7 @@ import com.xingcdev.museum.exceptions.MuseumNotFoundException;
 import com.xingcdev.museum.exceptions.VisitNotFoundException;
 import com.xingcdev.museum.mappers.impl.VisitDtoMapper;
 import com.xingcdev.museum.mappers.impl.VisitRequestBodyMapper;
+import com.xingcdev.museum.mappers.impl.VisitUpdateRequestBodyMapper;
 import com.xingcdev.museum.services.MuseumService;
 import com.xingcdev.museum.services.VisitService;
 import jakarta.validation.Valid;
@@ -26,12 +28,14 @@ public class VisitController {
     private final VisitService visitService;
     private final MuseumService museumService;
     private final VisitRequestBodyMapper visitRequestBodyMapper;
+    private final VisitUpdateRequestBodyMapper visitUpdateRequestBodyMapper;
     private final VisitDtoMapper visitDtoMapper;
 
-    public VisitController(VisitService visitService, VisitRequestBodyMapper visitRequestBodyMapper, MuseumService museumService, VisitDtoMapper visitDtoMapper) {
+    public VisitController(VisitService visitService, VisitRequestBodyMapper visitRequestBodyMapper, MuseumService museumService, VisitUpdateRequestBodyMapper visitUpdateRequestBodyMapper, VisitDtoMapper visitDtoMapper) {
         this.visitService = visitService;
         this.visitRequestBodyMapper = visitRequestBodyMapper;
         this.museumService = museumService;
+        this.visitUpdateRequestBodyMapper = visitUpdateRequestBodyMapper;
         this.visitDtoMapper = visitDtoMapper;
     }
 
@@ -86,21 +90,14 @@ public class VisitController {
     public ResponseEntity<VisitDto> fullUpdateVisit(
             @AuthenticationPrincipal Jwt jwt,
             @PathVariable("id") UUID id,
-            @Valid @RequestBody VisitRequestBody visitRequestBody
+            @Valid @RequestBody VisitUpdateRequestBody visitRequestBody
     ) {
         var existingVisit = visitService.findOneByUserId(id, jwt.getSubject()).orElseThrow(() -> new VisitNotFoundException(id));
 
-        // 1. Check if the museum exists
-        if (!museumService.existsById(visitRequestBody.getMuseumId()))
-            throw new MuseumNotFoundException(visitRequestBody.getMuseumId().toString());
-
-        // Make sure the id is the one from the param
-        var visit = visitRequestBodyMapper.mapFromDto(visitRequestBody);
-        visit.setId(id);
-        visit.setUserId(jwt.getSubject());
-        // 'created' in requestBody in null
-        visit.setCreated(existingVisit.getCreated());
-        var savedVisit = visitService.save(visit);
+        var visit = visitUpdateRequestBodyMapper.mapFromDto(visitRequestBody);
+        existingVisit.setTitle(visit.getTitle());
+        existingVisit.setComment(visit.getComment());
+        var savedVisit = visitService.save(existingVisit);
         return new ResponseEntity<>(visitDtoMapper.mapToDto(savedVisit), HttpStatus.OK);
     }
 
