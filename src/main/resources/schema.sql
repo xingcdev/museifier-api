@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS museum;
 
 CREATE TABLE museum
 (
-    id           uuid PRIMARY KEY,
+    id           uuid default gen_random_uuid() PRIMARY KEY,
     name         varchar(255),
     address      varchar(255),
     postal_code  varchar(255),
@@ -17,7 +17,7 @@ CREATE TABLE museum
 
 CREATE TABLE visit
 (
-    id         uuid PRIMARY KEY,
+    id         uuid default gen_random_uuid() PRIMARY KEY,
     title      varchar(50)            NOT NULL,
     visit_date date                   NOT NULL,
     comment    varchar(255)           NOT NULL,
