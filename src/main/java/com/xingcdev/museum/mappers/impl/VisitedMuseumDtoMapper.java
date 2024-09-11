@@ -3,13 +3,14 @@ package com.xingcdev.museum.mappers.impl;
 import com.xingcdev.museum.domain.dto.VisitedMuseumDto;
 import com.xingcdev.museum.domain.entities.CustomPage;
 import com.xingcdev.museum.domain.entities.Museum;
+import com.xingcdev.museum.mappers.ICustomPageDtoMapper;
 import com.xingcdev.museum.mappers.IDtoMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 
 @Component
-public class VisitedMuseumDtoMapper implements IDtoMapper<Museum, VisitedMuseumDto> {
+public class VisitedMuseumDtoMapper implements IDtoMapper<Museum, VisitedMuseumDto>, ICustomPageDtoMapper<Museum, VisitedMuseumDto> {
 
     private final ModelMapper mapper;
 

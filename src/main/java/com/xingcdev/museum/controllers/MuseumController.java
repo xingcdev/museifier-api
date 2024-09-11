@@ -1,10 +1,14 @@
 package com.xingcdev.museum.controllers;
 
+import com.xingcdev.museum.domain.dto.GetNearbyMuseumsDto;
 import com.xingcdev.museum.domain.dto.MuseumDto;
 import com.xingcdev.museum.domain.dto.VisitedMuseumDto;
 import com.xingcdev.museum.domain.entities.CustomPage;
 import com.xingcdev.museum.domain.entities.Museum;
+import com.xingcdev.museum.exceptions.InvalidCoordinatesException;
 import com.xingcdev.museum.mappers.impl.MuseumDtoMapper;
+import com.xingcdev.museum.mappers.impl.MuseumWithVisitsDtoMapper;
+import com.xingcdev.museum.mappers.impl.NearbyMuseumDtoMapper;
 import com.xingcdev.museum.mappers.impl.VisitedMuseumDtoMapper;
 import com.xingcdev.museum.services.MuseumService;
 import com.xingcdev.museum.specifications.MuseumSpecificationBuilder;
@@ -26,12 +30,17 @@ public class MuseumController {
 
     private final MuseumService museumService;
     private final MuseumDtoMapper museumMapper;
+    private final MuseumWithVisitsDtoMapper museumWithVisitsDtoMapper;
     private final VisitedMuseumDtoMapper visitedMuseumDtoMapper;
 
-    public MuseumController(MuseumService museumService, MuseumDtoMapper museumMapper, VisitedMuseumDtoMapper visitedMuseumDtoMapper) {
+    private final NearbyMuseumDtoMapper nearbyMuseumDtoMapper;
+
+    public MuseumController(MuseumService museumService, MuseumDtoMapper museumMapper, MuseumWithVisitsDtoMapper museumWithVisitsDtoMapper, VisitedMuseumDtoMapper visitedMuseumDtoMapper, NearbyMuseumDtoMapper nearbyMuseumDtoMapper) {
         this.museumService = museumService;
         this.museumMapper = museumMapper;
+        this.museumWithVisitsDtoMapper = museumWithVisitsDtoMapper;
         this.visitedMuseumDtoMapper = visitedMuseumDtoMapper;
+        this.nearbyMuseumDtoMapper = nearbyMuseumDtoMapper;
     }
 
     @GetMapping(path = "/museums")
@@ -162,12 +171,42 @@ public class MuseumController {
     }
 
     @GetMapping(path = "/museums/{id}")
-    public ResponseEntity<MuseumDto> getMuseum(@PathVariable("id") UUID id) {
+    public ResponseEntity<VisitedMuseumDto> getMuseum(@PathVariable("id") UUID id) {
         Optional<Museum> foundMuseum = museumService.findOne(id);
         // Convert Museum entity into MuseumDto
         return foundMuseum.map(museum -> {
-            MuseumDto museumDto = this.museumMapper.mapToDto(museum);
+            var museumDto = this.visitedMuseumDtoMapper.mapToDto(museum);
             return new ResponseEntity<>(museumDto, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(path = "/museums/nearby")
+    public ResponseEntity<GetNearbyMuseumsDto> getNearbyMuseums(
+            @RequestParam(value = "location") String location
+    ) {
+
+        try {
+            var latLonList = location.split(",");
+            if (latLonList.length > 2) {
+                throw new InvalidCoordinatesException();
+            }
+            var latitude = Double.parseDouble(latLonList[0]);
+            var longitude = Double.parseDouble(latLonList[1]);
+
+            var nearbyMuseums = museumService.findNearby(latitude, longitude);
+            var nearbyMuseumsDto = nearbyMuseums.stream().map(nearbyMuseumDtoMapper::mapToDto).toList();
+
+            var dto = GetNearbyMuseumsDto.builder()
+                    .latitude(latitude)
+                    .longitude(longitude)
+                    .data(nearbyMuseumsDto)
+                    .totalResults(nearbyMuseumsDto.size())
+                    .build();
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new InvalidCoordinatesException();
+        }
+
+
     }
 }

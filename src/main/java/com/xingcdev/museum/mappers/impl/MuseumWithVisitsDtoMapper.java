@@ -1,27 +1,27 @@
 package com.xingcdev.museum.mappers.impl;
 
-import com.xingcdev.museum.domain.dto.NearbyMuseumDto;
-import com.xingcdev.museum.domain.entities.NearbyMuseum;
+import com.xingcdev.museum.domain.dto.MuseumWithVisitsDto;
+import com.xingcdev.museum.domain.entities.Museum;
 import com.xingcdev.museum.mappers.IDtoMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NearbyMuseumDtoMapper implements IDtoMapper<NearbyMuseum, NearbyMuseumDto> {
+public class MuseumWithVisitsDtoMapper implements IDtoMapper<Museum, MuseumWithVisitsDto> {
 
     private final ModelMapper mapper;
 
-    public NearbyMuseumDtoMapper(ModelMapper mapper) {
+    public MuseumWithVisitsDtoMapper(ModelMapper mapper) {
         this.mapper = mapper;
     }
 
     @Override
-    public NearbyMuseumDto mapToDto(NearbyMuseum nearbyMuseum) {
-        return mapper.map(nearbyMuseum, NearbyMuseumDto.class);
+    public MuseumWithVisitsDto mapToDto(Museum museum) {
+        return mapper.map(museum, MuseumWithVisitsDto.class);
     }
 
     @Override
-    public NearbyMuseum mapFromDto(NearbyMuseumDto nearbyMuseumDto) {
-        return mapper.map(nearbyMuseumDto, NearbyMuseum.class);
+    public Museum mapFromDto(MuseumWithVisitsDto museumWithVisitsDto) {
+        return mapper.map(museumWithVisitsDto, Museum.class);
     }
 }

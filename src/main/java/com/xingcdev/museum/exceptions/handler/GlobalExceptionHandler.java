@@ -3,6 +3,7 @@ package com.xingcdev.museum.exceptions.handler;
 import com.xingcdev.museum.domain.dto.DetailDto;
 import com.xingcdev.museum.domain.dto.ErrorDto;
 import com.xingcdev.museum.domain.dto.ErrorDtoWithDetails;
+import com.xingcdev.museum.exceptions.InvalidCoordinatesException;
 import com.xingcdev.museum.exceptions.InvalidSortingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,6 +78,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidSortingException.class)
     public ResponseEntity<ErrorDto> handleInvalidSorting(InvalidSortingException ex) {
+        var errorDTO = ErrorDto.builder()
+                .code(ex.getCode())
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidCoordinatesException.class)
+    public ResponseEntity<ErrorDto> handleInvalidCoordinates(InvalidCoordinatesException ex) {
         var errorDTO = ErrorDto.builder()
                 .code(ex.getCode())
                 .message(ex.getMessage())

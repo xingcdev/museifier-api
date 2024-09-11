@@ -1,7 +1,6 @@
 package com.xingcdev.museum.mappers.impl;
 
 import com.xingcdev.museum.domain.dto.VisitUpdateRequestBody;
-import com.xingcdev.museum.domain.entities.CustomPage;
 import com.xingcdev.museum.domain.entities.Visit;
 import com.xingcdev.museum.mappers.IDtoMapper;
 import org.modelmapper.ModelMapper;
@@ -25,11 +24,4 @@ public class VisitUpdateRequestBodyMapper implements IDtoMapper<Visit, VisitUpda
     public Visit mapFromDto(VisitUpdateRequestBody visitUpdateRequestBody) {
         return this.mapper.map(visitUpdateRequestBody, Visit.class);
     }
-
-    @Override
-    public CustomPage<VisitUpdateRequestBody> mapToCustomPageDto(CustomPage<Visit> entityPage) {
-        return null;
-    }
-
-
 }

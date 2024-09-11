@@ -2,25 +2,31 @@ package com.xingcdev.museum.services;
 
 import com.xingcdev.museum.domain.entities.CustomPage;
 import com.xingcdev.museum.domain.entities.Museum;
+import com.xingcdev.museum.domain.entities.NearbyMuseum;
 import com.xingcdev.museum.exceptions.InvalidSortingException;
 import com.xingcdev.museum.repositories.MuseumRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class MuseumService {
 
     private final MuseumRepository museumRepository;
 
-    public MuseumService(MuseumRepository museumRepository) {
+    private final ModelMapper mapper;
+
+    private final GeocodingService geocodingService;
+
+    public MuseumService(MuseumRepository museumRepository, ModelMapper mapper, GeocodingService geocodingService) {
         this.museumRepository = museumRepository;
+        this.mapper = mapper;
+        this.geocodingService = geocodingService;
     }
 
     public CustomPage<Museum> findAll(int page, int pageSize, Optional<String> sortBy, Optional<String> orderBy) {
@@ -105,5 +111,25 @@ public class MuseumService {
 
     public boolean existsById(UUID id) {
         return museumRepository.existsById(id);
+    }
+
+    public List<NearbyMuseum> findNearby(double latitude, double longitude) {
+        var RADIUS_IN_KM = 5;
+
+        List<NearbyMuseum> nearbyMuseums = new ArrayList<>();
+        var museums = museumRepository.findAll();
+        for (Museum museum : museums) {
+            var distance = geocodingService.computeDistanceBetween(latitude, longitude, museum.getLatitude(), museum.getLongitude());
+            if (distance <= RADIUS_IN_KM) {
+                var nearbyMuseum = mapper.map(museum, NearbyMuseum.class);
+                nearbyMuseum.setTotalVisits(museum.getVisits().size());
+                nearbyMuseum.setDistance(distance);
+                nearbyMuseums.add(nearbyMuseum);
+            }
+        }
+
+        // Sort by distance
+        nearbyMuseums.sort(Comparator.comparingDouble(NearbyMuseum::getDistance));
+        return nearbyMuseums;
     }
 }

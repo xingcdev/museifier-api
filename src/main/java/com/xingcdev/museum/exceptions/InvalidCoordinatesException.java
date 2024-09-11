@@ -3,10 +3,10 @@ package com.xingcdev.museum.exceptions;
 import lombok.Data;
 
 @Data
-public class InvalidSortingException extends RuntimeException {
-    private String code = "invalid_sorting";
+public class InvalidCoordinatesException extends RuntimeException {
+    private String code = "invalid_coordinates";
 
-    public InvalidSortingException(String field) {
-        super("Invalid sort field: " + field + ".");
+    public InvalidCoordinatesException() {
+        super("Please provide a valid format of coordinates. This must be specified as 'latitude,longitude'");
     }
 }
