@@ -8,4 +8,5 @@ import lombok.EqualsAndHashCode;
 public class NearbyMuseumDto extends MuseumDto {
     private int totalVisits;
     private double distance;
+    private int averageRating;
 }

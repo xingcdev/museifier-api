@@ -3,6 +3,7 @@ package com.xingcdev.museum.services;
 import com.xingcdev.museum.domain.entities.CustomPage;
 import com.xingcdev.museum.domain.entities.Museum;
 import com.xingcdev.museum.domain.entities.NearbyMuseum;
+import com.xingcdev.museum.domain.entities.Visit;
 import com.xingcdev.museum.exceptions.InvalidSortingException;
 import com.xingcdev.museum.repositories.MuseumRepository;
 import org.modelmapper.ModelMapper;
@@ -124,6 +125,16 @@ public class MuseumService {
                 var nearbyMuseum = mapper.map(museum, NearbyMuseum.class);
                 nearbyMuseum.setTotalVisits(museum.getVisits().size());
                 nearbyMuseum.setDistance(distance);
+
+                if (!museum.getVisits().isEmpty()) {
+                    int totalRating = 0;
+                    for (Visit visit : museum.getVisits()) {
+                        totalRating = totalRating + visit.getRating();
+                    }
+                    nearbyMuseum.setAverageRating(totalRating / museum.getVisits().size());
+                }
+
+
                 nearbyMuseums.add(nearbyMuseum);
             }
         }

@@ -14,4 +14,6 @@ public class NearbyMuseum extends Museum {
     private int totalVisits;
 
     private double distance;
+
+    private int averageRating;
 }
