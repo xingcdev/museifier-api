@@ -36,9 +36,9 @@ springdoc:
 museum:
   oauth2:
     client-id: dtiMy6xitk6niYDU2LGZmMT6qymK5t978TqaoKUu
-    client-secret: eszO6Kp9VxhxxXz1YIX3IWyOIXpRrR7z
+    client-secret: wwmVBw4dhKyQu1aRRsmACccN3cxJIEkU
     scopes: "openid"
-    issuer-uri: http://localhost:9000/realms/museum-dev
-    token-uri: http://localhost:9000/realms/museum-dev/protocol/openid-connect/token
-    jwk-uri: http://localhost:9000/realms/museum-dev/protocol/openid-connect/certs
+    issuer-uri: http://localhost:9000/realms/museifier-dev
+    token-uri: http://localhost:9000/realms/museifier-dev/protocol/openid-connect/token
+    jwk-uri: http://localhost:9000/realms/museifier-dev/protocol/openid-connect/certs
 debug: true

@@ -25,6 +25,6 @@ springdoc:
 
 museum:
   oauth2:
-    issuer-uri: http://localhost:9000/realms/museum-dev
-    token-uri: http://localhost:9000/realms/museum-dev/protocol/openid-connect/token
-    jwk-uri: http://localhost:9000/realms/museum-dev/protocol/openid-connect/certs
+    issuer-uri: http://localhost:9000/realms/museifier-dev
+    token-uri: http://localhost:9000/realms/museifier-dev/protocol/openid-connect/token
+    jwk-uri: http://localhost:9000/realms/museifier-dev/protocol/openid-connect/certs
