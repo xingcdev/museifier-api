@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -25,6 +26,7 @@ import java.util.UUID;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
+@ActiveProfiles({"development", "test"})
 public class VisitControllerIntegrationTest {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
@@ -33,24 +35,24 @@ public class VisitControllerIntegrationTest {
 
     private final VisitService visitService;
     private final MuseumService museumService;
+    private final TestDataUtil testDataUtil;
 
     private static String accessToken;
 
     private static String currentUserId;
 
     @Autowired
-    public VisitControllerIntegrationTest(MockMvc mockMvc, VisitService visitService, MuseumService museumService, ObjectMapper objectMapper) {
+    public VisitControllerIntegrationTest(MockMvc mockMvc, VisitService visitService, MuseumService museumService, ObjectMapper objectMapper, TestDataUtil testDataUtil) {
         this.mockMvc = mockMvc;
         this.visitService = visitService;
         this.museumService = museumService;
         this.objectMapper = objectMapper;
+        this.testDataUtil = testDataUtil;
     }
 
     @BeforeAll
-    static void setup() {
+    static void setup(@Autowired AuthUtils authUtils) {
         logger.info("Authenticating...");
-
-        var authUtils = new AuthUtils();
         var result = authUtils.authenticate();
         accessToken = result.getAccessToken();
         currentUserId = result.getUserId();
@@ -58,10 +60,10 @@ public class VisitControllerIntegrationTest {
 
     @Test
     public void getVisitsShouldReturnListOfVisits() throws Exception {
-        var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
-        visitService.save(TestDataUtil.createVisitA(currentUserId, museumInDb));
-        visitService.save(TestDataUtil.createVisitB(currentUserId, museumInDb));
-        visitService.save(TestDataUtil.createVisitC(currentUserId, museumInDb));
+        var museumInDb = museumService.save(testDataUtil.createMuseumLeLouvre());
+        visitService.save(testDataUtil.createVisitA(currentUserId, museumInDb));
+        visitService.save(testDataUtil.createVisitB(currentUserId, museumInDb));
+        visitService.save(testDataUtil.createVisitC(currentUserId, museumInDb));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/visits")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -78,8 +80,8 @@ public class VisitControllerIntegrationTest {
 
     @Test
     public void getVisitShouldReturnVisitWhenExist() throws Exception {
-        var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
-        var visitInDb = visitService.save(TestDataUtil.createVisitA(currentUserId, museumInDb));
+        var museumInDb = museumService.save(testDataUtil.createMuseumLeLouvre());
+        var visitInDb = visitService.save(testDataUtil.createVisitA(currentUserId, museumInDb));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/visits/" + visitInDb.getId().toString())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -111,7 +113,7 @@ public class VisitControllerIntegrationTest {
 
     @Test
     public void createVisitShouldReturnCreatedVisit() throws Exception {
-        var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
+        var museumInDb = museumService.save(testDataUtil.createMuseumLeLouvre());
 
         var visitDto = VisitRequestBody
                 .builder()
@@ -163,7 +165,7 @@ public class VisitControllerIntegrationTest {
 
     @Test
     public void createVisitShouldReturnMuseumAlreadyVisited() throws Exception {
-        var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
+        var museumInDb = museumService.save(testDataUtil.createMuseumLeLouvre());
         var visitDto = VisitRequestBody
                 .builder()
                 .title("Title")
@@ -197,16 +199,13 @@ public class VisitControllerIntegrationTest {
 
     @Test
     public void fullUpdateVisitShouldReturnUpdatedVisit() throws Exception {
-        var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
-        var visitInDb = visitService.save(TestDataUtil.createVisitA(currentUserId, museumInDb));
+        var museumInDb = museumService.save(testDataUtil.createMuseumLeLouvre());
+        var visitInDb = visitService.save(testDataUtil.createVisitA(currentUserId, museumInDb));
 
         var visitDto = VisitRequestBody
                 .builder()
                 .title("Title of VisitRequestBody")
-                .rating(3)
-                .visitDate(LocalDate.now())
                 .comment("Comment updated")
-                .museumId(visitInDb.getMuseum().getId())
                 .build();
         String visitDtoJson = objectMapper.writeValueAsString(visitDto);
 
@@ -231,10 +230,7 @@ public class VisitControllerIntegrationTest {
         var visitDto = VisitRequestBody
                 .builder()
                 .title("Title of VisitRequestBody")
-                .rating(3)
-                .visitDate(LocalDate.now())
                 .comment("Comment updated")
-                .museumId(UUID.fromString("00000000-0000-0000-0000-000000000000"))
                 .build();
         String visitDtoJson = objectMapper.writeValueAsString(visitDto);
 
@@ -251,62 +247,9 @@ public class VisitControllerIntegrationTest {
     }
 
     @Test
-    public void partialUpdateVisitShouldReturnUpdatedVisit() throws Exception {
-        var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
-        var visitInDb = visitService.save(TestDataUtil.createVisitA(currentUserId, museumInDb));
-
-        var visitDto = VisitRequestBody
-                .builder()
-                .title("Title of VisitRequestBody")
-                .rating(3)
-                .visitDate(LocalDate.now())
-                .comment("Comment updated")
-                .build();
-        String visitDtoJson = objectMapper.writeValueAsString(visitDto);
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.patch("/visits/" + visitInDb.getId().toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken)
-                        .content(visitDtoJson)
-        ).andExpect(
-                MockMvcResultMatchers.status().isOk()
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.id").value(visitInDb.getId().toString())
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.comment").value("Comment updated")
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.museum.id").value(museumInDb.getId().toString())
-        );
-    }
-
-    @Test
-    public void partialUpdateVisitShouldReturnMuseumNotFound() throws Exception {
-        var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
-        var visitInDb = visitService.save(TestDataUtil.createVisitA(currentUserId, museumInDb));
-
-        var visitDto = VisitRequestBody
-                .builder()
-                .museumId(UUID.fromString("00000000-0000-0000-0000-000000000000"))
-                .build();
-        String visitDtoJson = objectMapper.writeValueAsString(visitDto);
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.patch("/visits/" + visitInDb.getId().toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken)
-                        .content(visitDtoJson)
-        ).andExpect(
-                MockMvcResultMatchers.status().isNotFound()
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.code").value("museum_not_found")
-        );
-    }
-
-    @Test
     public void deleteVisitShouldReturnDeletedVisit() throws Exception {
-        var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
-        var visitInDb = visitService.save(TestDataUtil.createVisitA(currentUserId, museumInDb));
+        var museumInDb = museumService.save(testDataUtil.createMuseumLeLouvre());
+        var visitInDb = visitService.save(testDataUtil.createVisitA(currentUserId, museumInDb));
 
         mockMvc.perform(
                 MockMvcRequestBuilders.delete("/visits/" + visitInDb.getId().toString())

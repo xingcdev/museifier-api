@@ -101,20 +101,6 @@ public class VisitController {
         return new ResponseEntity<>(visitDtoMapper.mapToDto(savedVisit), HttpStatus.OK);
     }
 
-    @PatchMapping(path = "/visits/{id}")
-    public ResponseEntity<VisitDto> partialUpdateVisit(
-            @AuthenticationPrincipal Jwt jwt,
-            @PathVariable("id") UUID id,
-            @Valid @RequestBody VisitRequestBody visitRequestBody
-    ) {
-        if (!visitService.existsByUserId(id, jwt.getSubject())) throw new VisitNotFoundException(id);
-
-        var visit = visitRequestBodyMapper.mapFromDto(visitRequestBody);
-        visit.setUserId(jwt.getSubject());
-        var updatedVisit = visitService.partialUpdate(id, visit);
-        return new ResponseEntity<>(visitDtoMapper.mapToDto(updatedVisit), HttpStatus.OK);
-    }
-
     @DeleteMapping(path = "/visits/{id}")
     public ResponseEntity<VisitDto> deleteVisit(
             @AuthenticationPrincipal Jwt jwt,

@@ -35,14 +35,17 @@ public class MuseumControllerIntegrationTests {
 
     private final ObjectMapper objectMapper;
 
+    private final TestDataUtil testDataUtil;
+
     private static String accessToken;
 
     @Autowired
     public MuseumControllerIntegrationTests(MockMvc mockMvc,
-                                            MuseumService museumService, ObjectMapper objectMapper) {
+                                            MuseumService museumService, ObjectMapper objectMapper, TestDataUtil testDataUtil) {
         this.mockMvc = mockMvc;
         this.museumService = museumService;
         this.objectMapper = objectMapper;
+        this.testDataUtil = testDataUtil;
     }
 
     @BeforeAll
@@ -54,9 +57,9 @@ public class MuseumControllerIntegrationTests {
 
     @Test
     public void getMuseumsShouldReturnMuseums() throws Exception {
-        museumService.save(TestDataUtil.createMuseumLeLouvre());
-        museumService.save(TestDataUtil.createMuseumChintreuil());
-        museumService.save(TestDataUtil.createMuseumMuseeDuBois());
+        museumService.save(testDataUtil.createMuseumLeLouvre());
+        museumService.save(testDataUtil.createMuseumChintreuil());
+        museumService.save(testDataUtil.createMuseumMuseeDuBois());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/museums")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -73,9 +76,9 @@ public class MuseumControllerIntegrationTests {
 
     @Test
     public void getMuseumsShouldReturnSortingMuseums() throws Exception {
-        museumService.save(TestDataUtil.createMuseumLeLouvre());
-        museumService.save(TestDataUtil.createMuseumChintreuil());
-        museumService.save(TestDataUtil.createMuseumMuseeDuBois());
+        museumService.save(testDataUtil.createMuseumLeLouvre());
+        museumService.save(testDataUtil.createMuseumChintreuil());
+        museumService.save(testDataUtil.createMuseumMuseeDuBois());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/museums?sort=name:desc")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -88,9 +91,9 @@ public class MuseumControllerIntegrationTests {
 
     @Test
     public void getMuseumsShouldReturnSearchingMuseums() throws Exception {
-        museumService.save(TestDataUtil.createMuseumLeLouvre());
-        museumService.save(TestDataUtil.createMuseumChintreuil());
-        museumService.save(TestDataUtil.createMuseumMuseeDuBois());
+        museumService.save(testDataUtil.createMuseumLeLouvre());
+        museumService.save(testDataUtil.createMuseumChintreuil());
+        museumService.save(testDataUtil.createMuseumMuseeDuBois());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/museums?q=du&sort=name:desc")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -102,9 +105,9 @@ public class MuseumControllerIntegrationTests {
 
     @Test
     public void getMuseumsShouldReturnMuseumInParis() throws Exception {
-        museumService.save(TestDataUtil.createMuseumLeLouvre());
-        museumService.save(TestDataUtil.createMuseumPicasso());
-        museumService.save(TestDataUtil.createMuseumMuseeDuBois());
+        museumService.save(testDataUtil.createMuseumLeLouvre());
+        museumService.save(testDataUtil.createMuseumPicasso());
+        museumService.save(testDataUtil.createMuseumMuseeDuBois());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/museums?city=paris")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -117,7 +120,7 @@ public class MuseumControllerIntegrationTests {
 
     @Test
     public void getMuseumShouldReturnMuseumWhenExist() throws Exception {
-        var museumInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
+        var museumInDb = museumService.save(testDataUtil.createMuseumLeLouvre());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/museums/" + museumInDb.getId().toString())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -145,8 +148,8 @@ public class MuseumControllerIntegrationTests {
 
     @Test
     public void getMuseumsShouldReturnVisitedMuseums() throws Exception {
-        var museumLeLouvreInDb = museumService.save(TestDataUtil.createMuseumLeLouvre());
-        var museumPicassoInDb = museumService.save(TestDataUtil.createMuseumPicasso());
+        var museumLeLouvreInDb = museumService.save(testDataUtil.createMuseumLeLouvre());
+        var museumPicassoInDb = museumService.save(testDataUtil.createMuseumPicasso());
 
         var visitDto1 = VisitRequestBody
                 .builder()

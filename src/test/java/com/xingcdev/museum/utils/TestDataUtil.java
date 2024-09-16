@@ -2,10 +2,12 @@ package com.xingcdev.museum.utils;
 
 import com.xingcdev.museum.domain.entities.Museum;
 import com.xingcdev.museum.domain.entities.Visit;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TestDataUtil {
 
-    public static Museum createMuseumLeLouvre() {
+    public Museum createMuseumLeLouvre() {
         return Museum.builder()
                 .name("musée du Louvre")
                 .address("Musée du Louvre, 75058 Paris CEDEX 01")
@@ -19,7 +21,7 @@ public class TestDataUtil {
                 .build();
     }
 
-    public static Museum createMuseumPicasso() {
+    public Museum createMuseumPicasso() {
         return Museum.builder()
                 .name("musée Picasso")
                 .address("5, rue Thorigny")
@@ -33,7 +35,7 @@ public class TestDataUtil {
                 .build();
     }
 
-    public static Museum createMuseumChintreuil() {
+    public Museum createMuseumChintreuil() {
         return Museum.builder()
                 .name("musée Chintreuil")
                 .address("66 rue Maréchal de Lattre-de-Tassigny")
@@ -47,7 +49,7 @@ public class TestDataUtil {
                 .build();
     }
 
-    public static Museum createMuseumMuseeDuBois() {
+    public Museum createMuseumMuseeDuBois() {
         return Museum.builder()
                 .name("musée du bois")
                 .address("place de la République")
@@ -62,7 +64,7 @@ public class TestDataUtil {
     }
 
     // Provide userId because the user is from Keycloak and the id changes each time we setup a new instance.
-    public static Visit createVisitA(String userId, Museum museum) {
+    public Visit createVisitA(String userId, Museum museum) {
         return Visit.builder()
                 .comment("Comment of visit A")
                 .museum(museum)
@@ -70,7 +72,7 @@ public class TestDataUtil {
                 .build();
     }
 
-    public static Visit createVisitB(String userId, Museum museum) {
+    public Visit createVisitB(String userId, Museum museum) {
         return Visit.builder()
                 .comment("Comment of visit B")
                 .museum(museum)
@@ -78,7 +80,7 @@ public class TestDataUtil {
                 .build();
     }
 
-    public static Visit createVisitC(String userId, Museum museum) {
+    public Visit createVisitC(String userId, Museum museum) {
         return Visit
                 .builder()
                 .comment("Comment of visit C")
