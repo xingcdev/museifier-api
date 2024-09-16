@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/museifier
+    username: sa
+    password: password
+    driverClassName: org.postgresql.Driver
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${museifier.oauth2.issuer-uri}
+          # Point to the URI containing the public key so that our Resource Server can verify the tokens’ integrity.
+          jwk-set-uri: ${museifier.oauth2.jwk-uri}
+  application:
+    name: museum
+  jpa:
+    hibernate:
+      # Disable automatic schema creation/update for production.
+      ddl-auto: none
+  h2:
+    console:
+      enabled: false
+  sql:
+    init:
+      mode: never
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+museifier:
+  oauth2:
+    client-id: dtiMy6xitk6niYDU2LGZmMT6qymK5t978TqaoKUu
+    client-secret: wwmVBw4dhKyQu1aRRsmACccN3cxJIEkU
+    scopes: "openid"
+    issuer-uri: http://localhost:9000/realms/museifier
+    token-uri: http://localhost:9000/realms/museifier/protocol/openid-connect/token
+    jwk-uri: http://localhost:9000/realms/museifier/protocol/openid-connect/certs

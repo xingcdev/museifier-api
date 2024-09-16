@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
-    @Value("${museum.oauth2.issuer-uri}")
+    @Value("${museifier.oauth2.issuer-uri}")
     String authorizationServerUrl;
 
-    @Value("${museum.oauth2.token-uri}")
+    @Value("${museifier.oauth2.token-uri}")
     String authorizationTokenUrl;
 
     private static final String OAUTH_SCHEME_NAME = "OAuth_security_schema";
