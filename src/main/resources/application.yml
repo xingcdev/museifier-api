@@ -1,4 +1,4 @@
 # Default profile
 spring:
   profiles:
-    active: dev
+    active: development

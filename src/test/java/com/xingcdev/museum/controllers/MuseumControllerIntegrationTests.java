@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
+@ActiveProfiles({"development", "test"})
 public class MuseumControllerIntegrationTests {
 
     private final MockMvc mockMvc;
@@ -35,7 +37,6 @@ public class MuseumControllerIntegrationTests {
 
     private static String accessToken;
 
-
     @Autowired
     public MuseumControllerIntegrationTests(MockMvc mockMvc,
                                             MuseumService museumService, ObjectMapper objectMapper) {
@@ -45,10 +46,8 @@ public class MuseumControllerIntegrationTests {
     }
 
     @BeforeAll
-    static void setup() {
+    public static void setup(@Autowired AuthUtils authUtils) {
         logger.info("Authenticating...");
-
-        var authUtils = new AuthUtils();
         var result = authUtils.authenticate();
         accessToken = result.getAccessToken();
     }

@@ -2,9 +2,11 @@ package com.xingcdev.museum.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -15,9 +17,18 @@ import java.net.URI;
 import java.util.Collections;
 
 @Getter
+@Component
 public class AuthUtils {
 
-    private final String authorizationServerUri = "http://localhost:9000/realms/museum-dev";
+    @Value("${museifier.oauth2.issuer-uri}")
+    private String authorizationServerUri;
+
+    @Value("${museifier.oauth2.client-id}")
+    private String clientId;
+
+    @Value("${museifier.oauth2.client-secret}")
+    private String clientSecret;
+
 
     public AuthInfo authenticate() {
         URI uri = UriComponentsBuilder
@@ -26,9 +37,9 @@ public class AuthUtils {
                 .toUri();
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.put("grant_type", Collections.singletonList("password"));
-        formData.put("client_id", Collections.singletonList("dtiMy6xitk6niYDU2LGZmMT6qymK5t978TqaoKUu"));
-        formData.put("client_secret", Collections.singletonList("eszO6Kp9VxhxxXz1YIX3IWyOIXpRrR7z"));
-        formData.put("username", Collections.singletonList("test"));
+        formData.put("client_id", Collections.singletonList(clientId));
+        formData.put("client_secret", Collections.singletonList(clientSecret));
+        formData.put("username", Collections.singletonList("test@test.com"));
         formData.put("password", Collections.singletonList("test"));
         formData.put("scope", Collections.singletonList("openid"));
 
