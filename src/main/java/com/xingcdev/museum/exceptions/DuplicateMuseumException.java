@@ -1,7 +1,9 @@
 package com.xingcdev.museum.exceptions;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class DuplicateMuseumException extends RuntimeException {
     private String code = "duplicate_museum";
