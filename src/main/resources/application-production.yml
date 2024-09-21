@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/museifier
-    username: sa
-    password: password
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driverClassName: org.postgresql.Driver
   security:
     oauth2:
@@ -17,9 +17,6 @@ spring:
     hibernate:
       # Disable automatic schema creation/update for production.
       ddl-auto: none
-  h2:
-    console:
-      enabled: false
   sql:
     init:
       mode: never
@@ -32,9 +29,9 @@ springdoc:
 
 museifier:
   oauth2:
-    client-id: dtiMy6xitk6niYDU2LGZmMT6qymK5t978TqaoKUu
-    client-secret: wwmVBw4dhKyQu1aRRsmACccN3cxJIEkU
+    client-id: ${OAUTH2_CLIENT_ID}
+    client-secret: ${OAUTH2_CLIENT_SECRET}
     scopes: "openid"
-    issuer-uri: http://localhost:9000/realms/museifier
-    token-uri: http://localhost:9000/realms/museifier/protocol/openid-connect/token
-    jwk-uri: http://localhost:9000/realms/museifier/protocol/openid-connect/certs
+    issuer-uri: ${OAUTH2_ISSUER_URI}
+    token-uri: ${OAUTH2_TOKEN_URI}
+    jwk-uri: ${OAUTH2_JWK_URI}
