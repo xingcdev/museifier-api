@@ -115,7 +115,7 @@ public class MuseumService {
     }
 
     public List<NearbyMuseum> findNearby(double latitude, double longitude) {
-        var RADIUS_IN_KM = 5;
+        var RADIUS_IN_KM = 4;
 
         List<NearbyMuseum> nearbyMuseums = new ArrayList<>();
         var museums = museumRepository.findAll();
