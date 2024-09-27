@@ -4,6 +4,7 @@ import com.xingcdev.museum.domain.entities.Museum;
 import com.xingcdev.museum.domain.entities.Visit;
 import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 @AllArgsConstructor
@@ -15,9 +16,11 @@ public class MuseumSpecification implements Specification<Museum> {
     public Predicate toPredicate(Root<Museum> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
         // If key == "q", do 'like' on museum name.
         if (searchCriteria.getKey().equalsIgnoreCase("q")) {
+            var unaccentedName = builder.function("unaccent", String.class, builder.lower(root.get("name")));
+            var unaccentedValue = StringUtils.stripAccents(searchCriteria.getValue().toLowerCase());
             return builder.like(
-                    builder.lower(root.get("name")),
-                    "%" + searchCriteria.getValue().toLowerCase() + "%");
+                    unaccentedName,
+                    "%" + unaccentedValue + "%");
         }
 
         if (searchCriteria.getKey().equalsIgnoreCase("visitUserId")) {
