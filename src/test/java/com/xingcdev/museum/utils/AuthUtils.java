@@ -26,10 +26,6 @@ public class AuthUtils {
     @Value("${museifier.oauth2.client-id}")
     private String clientId;
 
-    @Value("${museifier.oauth2.client-secret}")
-    private String clientSecret;
-
-
     public AuthInfo authenticate() {
         URI uri = UriComponentsBuilder
                 .fromUriString(authorizationServerUri + "/protocol/openid-connect/token")
@@ -38,8 +34,7 @@ public class AuthUtils {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.put("grant_type", Collections.singletonList("password"));
         formData.put("client_id", Collections.singletonList(clientId));
-        formData.put("client_secret", Collections.singletonList(clientSecret));
-        formData.put("username", Collections.singletonList("test@test.com"));
+        formData.put("username", Collections.singletonList("test"));
         formData.put("password", Collections.singletonList("test"));
         formData.put("scope", Collections.singletonList("openid"));
 
