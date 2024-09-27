@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:test-db;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;
-    username: sa
-    password: password
-    driverClassName: org.h2.Driver
+    url: jdbc:postgresql://localhost:5432/museifier
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
   security:
     oauth2:
       resourceserver:
@@ -12,14 +12,14 @@ spring:
           # Point to the URI containing the public key so that our Resource Server can verify the tokens’ integrity.
           jwk-set-uri: ${museifier.oauth2.jwk-uri}
   application:
-    name: museum
+    name: museifier-dev
   jpa:
     hibernate:
       # Disable Hibernate database initialization because we want to use 'schema.sql'
       ddl-auto: none
-  h2:
-    console:
-      enabled: true
+  sql:
+    init:
+      mode: always
 
 # ====== Disabled in prod ======
 springdoc:
@@ -29,14 +29,12 @@ springdoc:
     enabled: true
     oauth:
       client-id: ${museifier.oauth2.client-id}
-      client-secret: ${museifier.oauth2.client-secret}
       scopes: ${museifier.oauth2.scopes}
 # ==============================
 
 museifier:
   oauth2:
-    client-id: dtiMy6xitk6niYDU2LGZmMT6qymK5t978TqaoKUu
-    client-secret: wwmVBw4dhKyQu1aRRsmACccN3cxJIEkU
+    client-id: museifier-dev
     scopes: "openid"
     issuer-uri: http://localhost:9000/realms/museifier-dev
     token-uri: http://localhost:9000/realms/museifier-dev/protocol/openid-connect/token

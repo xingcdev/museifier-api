@@ -1,0 +1,48 @@
+services:
+  museifier-db:
+    image: postgres:16.3-alpine3.18
+    container_name: museifier-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: museifier
+      POSTGRES_PASSWORD: postgres
+
+  keycloak-db:
+    image: postgres:16.3-alpine3.18
+    container_name: keycloak-db
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "9001:5432"
+    networks:
+      - museifier_network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.5
+    container_name: keycloak
+    command: start-dev
+
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+    ports:
+      - "9000:8080"
+    restart: unless-stopped
+    depends_on:
+      - keycloak-db
+    networks:
+      - museifier_network
+
+networks:
+  museifier_network:
+volumes:
+  keycloak_db_data:
