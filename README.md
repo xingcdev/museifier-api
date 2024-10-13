@@ -1,4 +1,4 @@
-# Museifier
+# Muséifier
 
 Découvrir facilement les musées proches de chez vous et de noter vos visites. Explorer les musées locaux et gérer vos
 visites, que vous soyez passionné d'art, d'histoire ou de sciences.
