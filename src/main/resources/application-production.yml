@@ -1,3 +1,10 @@
+server:
+  tomcat:
+    threads:
+      # This is a demo app so it doesn't need too much threads.
+      min-spare: 5
+      max: 30
+
 spring:
   datasource:
     url: ${DB_URL}
