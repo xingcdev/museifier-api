@@ -57,6 +57,10 @@ services:
       - "9000:8080"
     volumes:
       - ./keycloak-themes:/opt/keycloak/providers/
+    deploy:
+      resources:
+        limits:
+          memory: 750m
     restart: unless-stopped
     depends_on:
       - keycloak-db

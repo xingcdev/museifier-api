@@ -36,6 +36,10 @@ services:
       KC_DB_PASSWORD: postgres
     ports:
       - "9000:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 750m
     restart: unless-stopped
     depends_on:
       - keycloak-db
